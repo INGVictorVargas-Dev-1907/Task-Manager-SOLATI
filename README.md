@@ -102,6 +102,8 @@ APP_URL=http://localhost:8080
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
+---
+
 ### 3. Configurar el Frontend
 ```bash
 cd ../frontend
@@ -119,6 +121,8 @@ REACT_APP_VERSION=1.0.0
 npm install
 ```
 
+---
+
 ### 🚀 Ejecución del Sistema
 Opción A: Ejecución Completa (Recomendada)
 Terminal 1 - API y Base de Datos:
@@ -133,6 +137,8 @@ cd frontend
 npm start
 ```
 
+---
+
 ## 🌐 URLs de Acceso
 
 | Servicio        | URL                          | Descripción       |
@@ -140,6 +146,8 @@ npm start
 | Frontend        | http://localhost:3000       | Aplicación React |
 | API Backend     | http://localhost:8080       | API RESTful      |
 | Base de Datos   | localhost:5432              | PostgreSQL       |
+
+---
 
 ### 📊 Estructura de la Base de Datos
 ```sql
@@ -161,6 +169,8 @@ CREATE TABLE tasks (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
+
+---
 
 #### 🔐 Autenticación API
 Registro de Usuario
@@ -192,6 +202,8 @@ GET /api/tasks
 Authorization: Bearer <jwt_token>
 ```
 
+---
+
 ## 📋 Endpoints de la API
 **Autenticación**
 
@@ -214,6 +226,8 @@ Authorization: Bearer <jwt_token>
 | GET    | /api/tasks/search/{term}   | Buscar tareas           |
 | GET    | api/tasks/status/{status}   | Filtrar por estado           |
 
+---
+
 Ejemplo de Tarea:
 ```json
 {
@@ -226,6 +240,8 @@ Ejemplo de Tarea:
   "updated_at": "2023-12-01T10:00:00Z"
 }
 ```
+
+---
 
 ### Funcionalidades del Frontend
 #### Sistema de Autenticación
@@ -247,6 +263,8 @@ Ejemplo de Tarea:
 - Validación en tiempo real de formularios
 - Diseño responsive para móviles
 - Interfaz moderna y profesional
+
+---
 
 
 ### 🔄 Estados de carga y manejo de errores
@@ -270,6 +288,8 @@ ports:
   - "8081:80"  # Cambiar puerto externo
 ```
 
+---
+
 ## Comandos Útiles
 Docker
 ```bash
@@ -278,6 +298,8 @@ docker-compose logs api    # Ver logs de la API
 docker-compose down        # Detener todos los contenedores
 docker-compose up --build  # Reconstruir contenedores
 ```
+
+---
 
 ### 📝 Estructura de Archivos del Backend
 ```bash
@@ -308,6 +330,7 @@ frontend/src/
 └── App.js               # Componente principal
 ```
 
+---
 
 ### 🤝 Contribución
 1. Fork el proyecto
@@ -316,8 +339,12 @@ frontend/src/
 4. Push a la rama (git push origin feature/AmazingFeature)
 5. Abre un Pull Request
 
+---
+
 ### 📄 Licencia
 Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.
+
+---
 
 ## 👨‍💻 Autor
 
