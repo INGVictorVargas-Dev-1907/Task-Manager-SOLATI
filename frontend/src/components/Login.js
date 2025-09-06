@@ -75,12 +75,29 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
                     </Button>
                 </Form>
 
-                <div className="text-center">
-                    <Button 
-                    variant="link" 
-                    onClick={onSwitchToRegister}
+                <div className="text-center mt-4">
+                    <Button
+                        variant="outline-primary"
+                        onClick={onSwitchToRegister}
+                        disabled={loading}
+                        className="rounded-pill px-4 py-2 d-flex align-items-center justify-content-center mx-auto"
+                        style={{
+                            border: '2px solid',
+                            background: 'transparent',
+                            transition: 'all 0.3s ease',
+                            width: 'fit-content'
+                        }}
+                        onMouseOver={(e) => {
+                            e.target.style.background = '#0d6efd';
+                            e.target.style.color = 'white';
+                        }}
+                        onMouseOut={(e) => {
+                            e.target.style.background = 'transparent';
+                            e.target.style.color = '#0d6efd';
+                        }}
                     >
-                    ¿No tienes cuenta? Regístrate aquí
+                        <span className="me-2">→</span>
+                        ¿No tienes cuenta? Regístrate aquí
                     </Button>
                 </div>
                 </Card.Body>

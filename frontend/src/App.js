@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Col, Container, Navbar, Row } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
 import Login from './components/Login';
@@ -40,6 +40,20 @@ function App() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
+  // fetchTasks con useCallback para evitar recreación en cada render
+  const fetchTasks = useCallback(async (authToken = token) => {
+    try {
+      setLoading(true);
+      setError('');
+      const tasksData = await getTasks(authToken);
+      setTasks(tasksData);
+    } catch (error) {
+      setError('Error al cargar las tareas: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]); // Dependencia: token
+
   // Cargar token y usuario desde localStorage al iniciar la app
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
@@ -50,14 +64,10 @@ function App() {
       setIsAuthenticated(true);
       fetchTasks(savedToken);
     }
-  }, []);
+  }, [fetchTasks]);
 
   // Aplicar filtros cuando cambien tareas o filtros
-  useEffect(() => {
-    applyFilters();
-  }, [tasks, searchTerm, statusFilter]);
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = tasks;
 
     if (searchTerm) {
@@ -78,24 +88,15 @@ function App() {
     if (currentPage > newTotalPages && newTotalPages > 0) {
       setCurrentPage(newTotalPages);
     }
-  };
+  }, [tasks, searchTerm, statusFilter, itemsPerPage, currentPage]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const getCurrentPageTasks = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredTasks.slice(startIndex, startIndex + itemsPerPage);
-  };
-
-  const fetchTasks = async (authToken = token) => {
-    try {
-      setLoading(true);
-      setError('');
-      const tasksData = await getTasks(authToken);
-      setTasks(tasksData);
-    } catch (error) {
-      setError('Error al cargar las tareas: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
   };
 
   // Manejo de búsqueda
@@ -186,7 +187,7 @@ function App() {
     }
   };
 
-  // Registro
+  // Registro - FUNCIÓN
   const handleRegister = async (userData) => {
     try {
       setLoading(true);
@@ -200,26 +201,30 @@ function App() {
       setShowRegister(false);
       setSuccess('Usuario registrado exitosamente');
       setTimeout(() => setSuccess(''), 3000);
+      return result; // Devolver resultado para manejo en Register
     } catch (error) {
-      setError('Error en el registro: ' + error.message);
+      // Lanzar el error para que Register lo capture
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  // Login
+  // Login - FUNCIÓN
   const handleLogin = async (credentials) => {
     try {
       setLoading(true);
       setError('');
-      const data = await login(credentials); // debe devolver { token, user }
+      const data = await login(credentials);
       setToken(data.token);
       localStorage.setItem('token', data.token);
       setUser(data.user);
       localStorage.setItem('user', JSON.stringify(data.user));
       setIsAuthenticated(true);
+      return data; // Devolver datos para manejo en Login
     } catch (error) {
-      setError('Error en el login: ' + error.message);
+      // Lanzar el error para que Login lo capture
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -242,13 +247,20 @@ function App() {
     return showRegister ? (
       <Register 
         onRegister={handleRegister}
-        onSwitchToLogin={() => setShowRegister(false)}
+        onSwitchToLogin={() => {
+          setShowRegister(false);
+          setError(''); // Limpiar errores al cambiar entre formularios
+        }}
         loading={loading}
+        error={error}
       />
     ) : (
       <Login 
         onLogin={handleLogin}
-        onSwitchToRegister={() => setShowRegister(true)}
+        onSwitchToRegister={() => {
+          setShowRegister(true);
+          setError(''); // Limpiar errores al cambiar entre formularios
+        }}
         loading={loading}
         error={error}
       />

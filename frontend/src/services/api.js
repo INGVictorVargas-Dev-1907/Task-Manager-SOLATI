@@ -93,17 +93,23 @@ export const getTaskStats = async (token) => {
 
 // Buscar tareas
 export const searchTasks = async (searchTerm, token) => {
+    if (!searchTerm || searchTerm.trim().length === 0) {
+        return []; // o lanzar un error si prefieres
+    }
+
     const response = await fetch(`${API_BASE_URL}/api/tasks/search?q=${encodeURIComponent(searchTerm)}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     });
-    
+
     if (!response.ok) {
-        throw new console.warn();
+        const errorData = await response.json();
+        console.warn('Error en búsqueda:', errorData);
+        throw new Error(errorData.message || 'Error al buscar tareas');
     }
-    
+
     const res = await response.json();
     return res.data || [];
 };
