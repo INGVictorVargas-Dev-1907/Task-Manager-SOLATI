@@ -1,0 +1,9 @@
+# .gitignore
+# Backend
+/vendor/
+.env
+
+# Frontend
+/node_modules/
+.env
+/build/
