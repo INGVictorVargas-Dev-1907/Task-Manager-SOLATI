@@ -184,5 +184,16 @@ class TaskRepository {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * tareas (tasks) están asociadas a un usuario específico
+     */
+    public function countByUser($userId) {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM tasks WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($row['total'] ?? 0);
+    }
 }
 ?>

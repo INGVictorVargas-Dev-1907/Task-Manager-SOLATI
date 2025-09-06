@@ -30,6 +30,8 @@ $app->group('/api', function ($group) {
     $group->post('/tasks', [\App\Controllers\TaskController::class, 'create']);
     $group->put('/tasks/{id}', [\App\Controllers\TaskController::class, 'update']);
     $group->delete('/tasks/{id}', [\App\Controllers\TaskController::class, 'delete']);
+    $group->get('/tasks/search', [\App\Controllers\TaskController::class, 'searchTasks']);
+    $group->get('/tasks/status/{status}', [\App\Controllers\TaskController::class, 'getByStatus']);
 })->add(new AuthMiddleware());
 
 // Ruta de healthcheck
