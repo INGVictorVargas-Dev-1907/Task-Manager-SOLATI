@@ -1,0 +1,77 @@
+
+services:
+  api:
+    build: .
+    container_name: task-manager-api
+    ports:
+      - "${SERVER_PORT:-8080}:80"
+    environment:
+      # Base de datos
+      DB_HOST: db
+      DB_NAME: ${DB_NAME:-taskdb}
+      DB_USER: ${DB_USER:-taskuser}
+      DB_PASS: ${DB_PASS:-taskpass}
+      DB_PORT: ${DB_PORT:-5432}
+
+      # JWT y seguridad
+      JWT_SECRET: ${JWT_SECRET:-tu_clave_super_secreta_jwt_muy_larga_y_compleja_aqui_2024}
+      JWT_EXPIRE: ${JWT_EXPIRE:-3600}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-clave_encryption_32_caracteres_2024_segura}
+
+      # Configuración de la app
+      APP_ENV: ${APP_ENV:-development}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      SERVER_NAME: ${SERVER_NAME:-task-api}
+
+      # CORS
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+
+    volumes:
+      - .:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - logs_data:/var/log/php
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - task-network
+
+  db:
+    image: postgres:13-alpine
+    container_name: task-manager-db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-taskdb}
+      POSTGRES_USER: ${DB_USER:-taskuser}
+      POSTGRES_PASSWORD: ${DB_PASS:-taskpass}
+      POSTGRES_PORT: ${DB_PORT:-5432}
+    ports:
+      - "${DB_EXTERNAL_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./database/backups:/backups
+    restart: unless-stopped
+    networks:
+      - task-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-taskuser} -d ${DB_NAME:-taskdb}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+  vendor_data:
+  logs_data:
+
+networks:
+  task-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
