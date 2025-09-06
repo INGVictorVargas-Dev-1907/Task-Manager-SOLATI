@@ -1,20 +1,61 @@
-# 📋 Sistema de Gestión de Tareas
+# 🚀 Task Manager - SOLATI
 
-Sistema completo de gestión de tareas con API RESTful contenerizada en PHP y frontend en React.
+Sistema completo de gestión de tareas con autenticación de usuarios, desarrollado para SOLATI S.A.S.
 
 ---
 
 ## 🚀 Características
+### Backend (PHP)
+- **API RESTful** completa con endpoints para gestión de tareas 
+- **Autenticación JWT** segura  
+- **Base de datos PostgreSQL** contenerizada  
+- **CRUD** completo de tareas  
+- **Validación de datos** en frontend y backend  
+- **Patrón MVC y Repository** para separación de responsabilidades 
 
-- ✅ API RESTful contenerizada con PHP Slim Framework  
-- ✅ Frontend React con Bootstrap responsive  
-- ✅ Autenticación JWT segura  
-- ✅ Base de datos PostgreSQL contenerizada  
-- ✅ CRUD completo de tareas  
-- ✅ Validación de datos en frontend y backend  
-- ✅ Documentación Swagger integrada  
-- ✅ Patrón MVC y Repository  
-- ✅ Diseño responsive para móviles y desktop  
+### Frontend (React.js)
+- **Interfaz moderna** con React Bootstrap
+- **Gestión de estado** con React Hooks
+- **Formularios interactivos** con validación en tiempo real
+- **Filtros y búsqueda** de tareas
+- **Paginación** eficiente
+- **Notificaciones** toast y alertas contextuales
+- **Diseño responsive** y profesional
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+### Backend
+- PHP 7.4+
+- JWT Authentication
+- MySQL Database
+- Swagger-PHP para documentación
+- Composer para gestión de dependencias
+
+### Frontend
+- React.js 18+
+- React Bootstrap
+- React Icons
+- Axios para peticiones HTTP
+- CSS3 con diseño moderno
+
+---
+
+## 📦 Instalación y Configuración
+
+### Prerrequisitos
+- PHP 7.4 o superior
+- Composer
+- Node.js 16+
+- MySQL 5.7+
+- Servidor web (Apache/Nginx)
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/INGVictorVargas-Dev-1907/Task_Manager-SOLATI.git
+cd task-manager
+```
 
 ---
 
@@ -38,28 +79,6 @@ task-manager/
 ```
 
 ---
-
-## 📋 Requisitos Previos
-
-- Docker y Docker Compose
-- Node.js 16+ y npm
-- Git (opcional)
-
----
-
-## 🛠️ Instalación y Configuración
-
-### 1. Clonar o Descargar el Proyecto
-```bash
-git clone <url-del-repositorio>
-cd task-manager
-```
-
-### 2. Configurar el Backend (API)
-```bash
-cd backend
-cp .env.example .env
-```
 
 #### variabes de entorno
 ```env
@@ -120,7 +139,6 @@ npm start
 |-----------------|-----------------------------|-----------------|
 | Frontend        | http://localhost:3000       | Aplicación React |
 | API Backend     | http://localhost:8080       | API RESTful      |
-| Documentación   | http://localhost:8080/api/docs | Swagger UI    |
 | Base de Datos   | localhost:5432              | PostgreSQL       |
 
 ### 📊 Estructura de la Base de Datos
@@ -175,15 +193,26 @@ Authorization: Bearer <jwt_token>
 ```
 
 ## 📋 Endpoints de la API
+**Autenticación**
+
+| Método | Endpoint           | Descripción               |
+|--------|------------------|--------------------------|
+| POST   | /api/register        | Registrar nuevo usuario |
+| POST   | /api/login        | Iniciar sesión       |
+| POST    | /api/logout   | Cerrrar sesión        |
+
 
 **Tareas (Requieren autenticación)**
 
 | Método | Endpoint           | Descripción               |
 |--------|------------------|--------------------------|
-| GET    | /api/tasks        | Obtener todas las tareas |
+| GET    | /api/tasks        | Listar tareas (con filtros) |
 | POST   | /api/tasks        | Crear nueva tarea        |
+| GET    | /api/tasks/{id}   | Obtener tarea específica        |
 | PUT    | /api/tasks/{id}   | Actualizar tarea         |
 | DELETE | /api/tasks/{id}   | Eliminar tarea           |
+| GET    | /api/tasks/search/{term}   | Buscar tareas           |
+| GET    | api/tasks/status/{status}   | Filtrar por estado           |
 
 Ejemplo de Tarea:
 ```json
@@ -198,6 +227,29 @@ Ejemplo de Tarea:
 }
 ```
 
+### Funcionalidades del Frontend
+#### Sistema de Autenticación
+- Registro de usuarios con validación
+- Login seguro con JWT
+- Logout y manejo de sesiones
+- Protección de rutas privadas
+
+#### Gestión de Tareas
+- Crear nuevas tareas con validación
+- Editar tareas existentes
+- Eliminar tareas con confirmación
+- Buscar tareas en tiempo real
+- Filtrar por estado (Todas, Pendientes, Completadas)
+- Estadísticas de tareas
+
+#### Interfaz de Usuario
+- Notificaciones toast para feedback
+- Validación en tiempo real de formularios
+- Diseño responsive para móviles
+- Interfaz moderna y profesional
+
+
+### 🔄 Estados de carga y manejo de errores
 ### Solución de Problemas
 
 Error de Conexión a la Base de Datos
@@ -256,9 +308,17 @@ frontend/src/
 └── App.js               # Componente principal
 ```
 
+
+### 🤝 Contribución
+1. Fork el proyecto
+2. Crea una rama para tu feature (git checkout -b feature/AmazingFeature)
+3. Commit tus cambios (git commit -m 'Add some AmazingFeature')
+4. Push a la rama (git push origin feature/AmazingFeature)
+5. Abre un Pull Request
+
 ### 📄 Licencia
+Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.
 
-Este proyecto está bajo la Licencia MIT.
+## 👨‍💻 Autor
 
-### Autor
-Victor Vargas Diaz
+**Victor Vargas** - [![GitHub](https://img.shields.io/badge/GitHub-INGVictorVargas--Dev--1907-181717?style=flat&logo=github)](https://github.com/INGVictorVargas-Dev-1907)
