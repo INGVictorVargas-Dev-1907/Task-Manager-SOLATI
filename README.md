@@ -198,10 +198,11 @@ cp .env.example .env
 ```
 
 #### Archivo frontend/.env:
+```bash
 REACT_APP_API_URL=http://localhost:8080
 REACT_APP_APP_NAME=nombre_de_la_app
 REACT_APP_VERSION=1.0.0
-
+```
 
 ### 4. Instalar Dependencias del Frontend
 Permanece en el directorio frontend/ e instala las dependencias de Node.js:
