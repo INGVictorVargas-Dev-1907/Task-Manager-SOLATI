@@ -6,44 +6,51 @@ use PDOException;
 use Dotenv\Dotenv;
 
 class Database {
-    private $host;
-    private $db_name;
-    private $username;
-    private $password;
-    public $conn;
-
-    public function __construct() {
+    // 1. Propiedad estática para la única instancia de la conexión
+    private static ?PDO $instance = null;
+    
+    // 2. El constructor es privado para evitar la creación directa de instancias
+    private function __construct() {
         // Cargar variables de entorno
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
         $dotenv->load();
-
-        $this->host = $_ENV['DB_HOST'];
-        $this->db_name = $_ENV['DB_NAME'];
-        $this->username = $_ENV['DB_USER'];
-        $this->password = $_ENV['DB_PASS'];
     }
 
-    public function getConnection() {
-        $this->conn = null;
-        try {
-            // Conexión con PostgreSQL
-            $this->conn = new PDO(
-                "pgsql:host=" . $this->host . ";port=" . ($_ENV['DB_PORT'] ?? '5432') . ";dbname=" . $this->db_name,
-                $this->username,
-                $this->password
-            );
+    // 3. Método estático para obtener la conexión
+    public static function getConnection(): ?PDO {
+        // Si no existe una instancia, la crea
+        if (self::$instance === null) {
+            try {
+                $host = $_ENV['DB_HOST'];
+                $db_name = $_ENV['DB_NAME'];
+                $username = $_ENV['DB_USER'];
+                $password = $_ENV['DB_PASS'];
+                $port = $_ENV['DB_PORT'] ?? '5432';
 
-            // Configurar atributos de PDO
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                self::$instance = new PDO(
+                    "pgsql:host={$host};port={$port};dbname={$db_name}",
+                    $username,
+                    $password
+                );
 
-            // Forzar codificación UTF-8 en PostgreSQL
-            $this->conn->exec("SET client_encoding TO 'UTF8'");
-            
-        } catch(PDOException $exception) {
-            echo "Connection error: " . $exception->getMessage();
+                // Configurar atributos de PDO
+                self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                self::$instance->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+                // Forzar codificación UTF-8
+                self::$instance->exec("SET client_encoding TO 'UTF8'");
+                
+            } catch(PDOException $exception) {
+                // En un entorno de producción, es mejor registrar el error que mostrarlo directamente
+                error_log("Connection error: " . $exception->getMessage());
+                return null;
+            }
         }
-        return $this->conn;
+        return self::$instance;
     }
+    
+    // 4. Prevenir la clonación y serialización de la instancia
+    private function __clone() {}
+    public function __wakeup() {}
 }
 ?>
