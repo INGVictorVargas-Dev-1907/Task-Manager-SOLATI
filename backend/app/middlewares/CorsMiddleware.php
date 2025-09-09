@@ -11,9 +11,17 @@ class CorsMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $origin = $request->getHeaderLine('Origin') ?: 'http://localhost:3000';
+        $allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:8081',
+            'http://localhost:8080'
+        ];
+
+        $origin = $request->getHeaderLine('Origin');
+        $originAllowed = in_array($origin, $allowedOrigins) ? $origin : null;
+
         $headers = [
-            'Access-Control-Allow-Origin' => $origin,
+            'Access-Control-Allow-Origin' => $originAllowed ?? 'http://localhost:3000',
             'Access-Control-Allow-Headers' => 'Authorization, Content-Type, Accept, X-Requested-With',
             'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Credentials' => 'true',
@@ -21,7 +29,7 @@ class CorsMiddleware implements MiddlewareInterface
             'Vary' => 'Origin'
         ];
 
-        // Si es preflight request OPTIONS, respondemos inmediatamente
+        // Preflight request
         if (strtoupper($request->getMethod()) === 'OPTIONS') {
             $response = new Response();
             foreach ($headers as $key => $value) {
@@ -30,7 +38,7 @@ class CorsMiddleware implements MiddlewareInterface
             return $response->withStatus(200);
         }
 
-        // Para solicitudes normales, procesamos la ruta y luego agregamos headers
+        // Normal request
         $response = $handler->handle($request);
         foreach ($headers as $key => $value) {
             $response = $response->withHeader($key, $value);
@@ -39,3 +47,4 @@ class CorsMiddleware implements MiddlewareInterface
         return $response;
     }
 }
+?>
