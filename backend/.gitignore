@@ -1,0 +1,14 @@
+# Ignorar archivos innecesarios en Docker
+.git/
+README.md
+docker-compose.override.yml
+docker-compose.prod.yml
+.env
+logs/
+storage/logs/
+node_modules/
+vendor/
+.idea/
+*.log
+logs/
+.DS_Store
