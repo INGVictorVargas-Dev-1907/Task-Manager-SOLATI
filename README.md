@@ -264,16 +264,6 @@ npm start
 | `npm install`  | Instala todas las dependencias del proyecto.  |
 | `npm start`    | Inicia la aplicación en modo desarrollo.      |
 
----
-
-## 🌐 URLs de Acceso
-
-| Servicio        | URL                          | Descripción       |
-|-----------------|-----------------------------|-----------------|
-| Frontend        | http://localhost:3000       | Aplicación React |
-| API Backend     | http://localhost:8080       | API RESTful      |
-| Base de Datos   | localhost:5432              | PostgreSQL       |
-
 
 ---
 
