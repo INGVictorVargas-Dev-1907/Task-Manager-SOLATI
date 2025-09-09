@@ -1,0 +1,12 @@
+{
+    "name": "Task Manager API",
+    "version": "1.0.0",
+    "description": "API RESTful para la autenticacion de usuarios y la gestión de tareas",
+    "title": "Documentación de la API Task Manager",
+    "url": "http://localhost:8080",
+    "sampleUrl": "http://localhost:8080",
+    "order": [
+        "Autenticación",
+        "Tareas"
+    ]
+}
