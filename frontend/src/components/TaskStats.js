@@ -2,9 +2,11 @@ import React from 'react';
 import { Card, Row, Col, ProgressBar } from 'react-bootstrap';
 
 const TaskStats = ({ tasks }) => {
-    const totalTasks = tasks.length;
+    // Un solo recorrido para contar ambas categorías
     const completedTasks = tasks.filter(task => task.status === 'completada').length;
-    const pendingTasks = tasks.filter(task => task.status === 'pendiente').length;
+    const totalTasks = tasks.length;
+    const pendingTasks = totalTasks - completedTasks;
+    
     const completionPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     return (
@@ -42,7 +44,7 @@ const TaskStats = ({ tasks }) => {
             
             {totalTasks > 0 && (
             <div className="mt-3">
-                <ProgressBar now={completionPercentage} 
+                <ProgressBar now={completionPercentage}
                             variant={completionPercentage === 100 ? 'success' : 'primary'} 
                             className="mb-2" />
                 <small className="text-muted">

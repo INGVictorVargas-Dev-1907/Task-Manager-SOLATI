@@ -8,6 +8,9 @@ use App\Middlewares\AuthMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// Establece zona horaria predeterminada a UTC
+date_default_timezone_set('UTC');
+
 // Cargar variables de entorno
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -26,12 +29,13 @@ $app->post('/api/login', [\App\Controllers\AuthController::class, 'login']);
 
 // Rutas protegidas
 $app->group('/api', function ($group) {
-    $group->get('/tasks', [\App\Controllers\TaskController::class, 'getAll']);
+    $group->get('/tasks/search', [\App\Controllers\TaskController::class, 'searchTasks']);
+    $group->get('/tasks/status/{status}', [\App\Controllers\TaskController::class, 'getByStatus']);
+    $group->get('/tasks', [\App\Controllers\TaskController::class, 'getTasks']);
+    $group->get('/tasks/{id}', [\App\Controllers\TaskController::class, 'getById']);
     $group->post('/tasks', [\App\Controllers\TaskController::class, 'create']);
     $group->put('/tasks/{id}', [\App\Controllers\TaskController::class, 'update']);
     $group->delete('/tasks/{id}', [\App\Controllers\TaskController::class, 'delete']);
-    $group->get('/tasks/search', [\App\Controllers\TaskController::class, 'searchTasks']);
-    $group->get('/tasks/status/{status}', [\App\Controllers\TaskController::class, 'getByStatus']);
 })->add(new AuthMiddleware());
 
 // Ruta de healthcheck
@@ -41,24 +45,6 @@ $app->get('/health', function (Request $request, Response $response) {
         "timestamp" => time(),
         "service" => "Task Manager API"
     ]));
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-// Ruta para generar documentación Swagger JSON
-$app->get('/api/docs', function (Request $request, Response $response) {
-    $swagger = \OpenApi\Generator::scan([
-        __DIR__ . '/../app/docs',        // Contiene swagger.php con @OA\Info()
-        __DIR__ . '/../app/Controllers'  // Todos los controladores
-    ]);
-
-    file_put_contents(__DIR__ . '/../public/swagger.json', $swagger->toJson());
-
-    $response->getBody()->write(json_encode([
-        "message" => "swagger.json generado",
-        "rutas_detectadas" => array_keys($swagger->paths),
-        "conteo" => count($swagger->paths)
-    ]));
-
     return $response->withHeader('Content-Type', 'application/json');
 });
 

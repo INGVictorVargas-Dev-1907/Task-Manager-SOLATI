@@ -3,7 +3,6 @@ import {
     Modal,
     Form,
     Button,
-    Alert,
     Row,
     Col,
     FloatingLabel
@@ -18,7 +17,6 @@ const TaskForm = ({ task, onSubmit, onCancel, loading = false }) => {
     });
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
-    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
 
     useEffect(() => {
@@ -40,7 +38,6 @@ const TaskForm = ({ task, onSubmit, onCancel, loading = false }) => {
         setHasChanges(false);
     }, [task]);
 
-    // Efecto para detectar cambios en los campos del formulario
     useEffect(() => {
         if (task) {
             const originalData = {
@@ -50,49 +47,29 @@ const TaskForm = ({ task, onSubmit, onCancel, loading = false }) => {
             };
             
             const changesDetected = 
-                formData.title !== originalData.title ||
-                formData.description !== originalData.description ||
+                formData.title.trim() !== originalData.title.trim() ||
+                formData.description.trim() !== originalData.description.trim() ||
                 formData.status !== originalData.status;
                 
             setHasChanges(changesDetected);
         }
     }, [formData, task]);
 
-    // Efecto para ocultar automáticamente la alerta después de 3 segundos
-    useEffect(() => {
-        if (showSuccessAlert) {
-            const timer = setTimeout(() => {
-                setShowSuccessAlert(false);
-            }, 3000);
-            
-            return () => clearTimeout(timer);
-        }
-    }, [showSuccessAlert]);
-
     const validateField = (name, value) => {
         let error = '';
+        const trimmedValue = value.trim();
 
         switch (name) {
             case 'title':
-                if (!task) {
-                    if (!value.trim()) {
-                        error = 'El título es requerido';
-                    } else if (value.trim().length < 3) {
-                        error = 'El título debe tener al menos 3 caracteres';
-                    } else if (value.trim().length > 255) {
-                        error = 'El título no puede exceder 255 caracteres';
-                    }
-                } else {
-                    if (value.trim().length > 0 && value.trim().length < 3) {
-                        error = 'El título debe tener al menos 3 caracteres si se modifica';
-                    } else if (value.trim().length > 255) {
-                        error = 'El título no puede exceder 255 caracteres';
-                    }
+                if (trimmedValue.length > 0 && trimmedValue.length < 3) {
+                    error = 'El título debe tener al menos 3 caracteres';
+                } else if (trimmedValue.length > 255) {
+                    error = 'El título no puede exceder 255 caracteres';
                 }
                 break;
 
             case 'description':
-                if (value.length > 1000) {
+                if (trimmedValue.length > 1000) {
                     error = 'La descripción no puede exceder 1000 caracteres';
                 }
                 break;
@@ -140,6 +117,7 @@ const TaskForm = ({ task, onSubmit, onCancel, loading = false }) => {
         const newErrors = {};
         const newTouched = {};
 
+        // Validar todos los campos al momento del submit
         Object.keys(formData).forEach(key => {
             newTouched[key] = true;
             const error = validateField(key, formData[key]);
@@ -157,23 +135,45 @@ const TaskForm = ({ task, onSubmit, onCancel, loading = false }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (validateForm()) {
-            onSubmit({
-                title: formData.title.trim(),
-                description: formData.description.trim(),
-                status: formData.status
-            });
-            
-            // Mostrar alerta de éxito
-            setShowSuccessAlert(true);
+        // Si la tarea existe (modo edición), solo se valida el título y descripción
+        if (task) {
+            const titleError = validateField('title', formData.title);
+            const descriptionError = validateField('description', formData.description);
+
+            // Validamos si hay algún error que bloquee el envío
+            const hasBlockingErrors = !!titleError || !!descriptionError;
+
+            // Si no hay errores y hay cambios, enviamos el formulario.
+            if (!hasBlockingErrors && hasChanges) {
+                onSubmit({
+                    ...task, // Conserva el ID de la tarea
+                    title: formData.title.trim(),
+                    description: formData.description.trim(),
+                    status: formData.status
+                });
+            } else if (!hasChanges) {
+                 // Si no hay cambios y no se necesita actualizar, simplemente se cierra el modal.
+                onCancel();
+            }
+        } else {
+            // Modo de creación
+            if (validateForm()) {
+                onSubmit({
+                    title: formData.title.trim(),
+                    description: formData.description.trim(),
+                    status: formData.status
+                });
+            }
         }
     };
 
     const descriptionLength = formData.description.length;
     const descriptionMaxLength = 1000;
-
-    // Verificar si hay errores que impidan enviar el formulario
     const hasBlockingErrors = Object.values(errors).some(error => error !== '');
+    const isFormDisabled = !task && !formData.title;
+
+    // Condición para habilitar/deshabilitar el botón de envío
+    const isSubmitDisabled = loading || (task && !hasChanges) || hasBlockingErrors || (!task && isFormDisabled);
 
     return (
         <Modal show={true} onHide={onCancel} centered>
@@ -185,49 +185,6 @@ const TaskForm = ({ task, onSubmit, onCancel, loading = false }) => {
 
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
-                    {/* Alertas para cuando se está CREANDO una tarea */}
-                    {!task && (
-                        <>
-                            {/* Alerta de éxito al crear */}
-                            {showSuccessAlert && (
-                                <Alert variant="success" className="mb-3" dismissible onClose={() => setShowSuccessAlert(false)}>
-                                    <strong>¡Tarea creada con éxito!</strong> La nueva tarea se ha guardado correctamente.
-                                </Alert>
-                            )}
-                            
-                            {/* Alerta de errores de validación al crear */}
-                            {Object.keys(errors).length > 0 && (
-                                <Alert variant="danger" className="mb-3">
-                                    <strong>Por favor, corrige los siguientes errores:</strong>
-                                    <ul className="mb-0 mt-2">
-                                        {Object.entries(errors).map(([field, error]) => (
-                                            error && <li key={field}>{error}</li>
-                                        ))}
-                                    </ul>
-                                </Alert>
-                            )}
-                        </>
-                    )}
-
-                    {/* Alertas para cuando se está EDITANDO una tarea */}
-                    {task && (
-                        <>
-                            {/* Alerta de éxito al editar */}
-                            {showSuccessAlert && (
-                                <Alert variant="success" className="mb-3" dismissible onClose={() => setShowSuccessAlert(false)}>
-                                    <strong>¡Tarea actualizada con éxito!</strong> Los cambios se han guardado correctamente.
-                                </Alert>
-                            )}
-                            
-                            {/* Alerta de cambios detectados al editar */}
-                            {hasChanges && !showSuccessAlert && (
-                                <Alert variant="info" className="mb-3">
-                                    <strong>⚠️ Tienes cambios sin guardar</strong>. Presiona "Actualizar Tarea" para guardar los cambios.
-                                </Alert>
-                            )}
-                        </>
-                    )}
-
                     <Form.Group className="mb-3">
                         <FloatingLabel label={task ? 'Título' : 'Título *'} controlId="title">
                             <Form.Control
@@ -317,7 +274,7 @@ const TaskForm = ({ task, onSubmit, onCancel, loading = false }) => {
                     <Button
                         variant="primary"
                         type="submit"
-                        disabled={loading || (!task && hasBlockingErrors)}
+                        disabled={isSubmitDisabled}
                     >
                         {loading ? (
                             <>

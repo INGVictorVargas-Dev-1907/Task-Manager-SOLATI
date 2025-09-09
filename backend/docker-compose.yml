@@ -1,4 +1,5 @@
 
+
 services:
   api:
     build: .
@@ -40,6 +41,11 @@ services:
     restart: unless-stopped
     networks:
       - task-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres:13-alpine
@@ -60,14 +66,27 @@ services:
       - task-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-taskuser} -d ${DB_NAME:-taskdb}"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  apidoc-viewer:
+    build: ./apidoc-nginx
+    container_name: task-manager-apidoc
+    ports:
+      - "8081:80"
+    networks:
+      - task-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+    driver: local
   vendor_data:
+    driver: local
   logs_data:
+    driver: local
 
 networks:
   task-network:

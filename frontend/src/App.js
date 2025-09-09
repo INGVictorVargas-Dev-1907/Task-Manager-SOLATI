@@ -1,24 +1,27 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Navbar, Row } from 'react-bootstrap';
+import { Button, Col, Container, Navbar, Row } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Login from './components/Login';
 import Pagination from './components/Pagination';
 import Register from './components/Register';
 import TaskFilters from './components/TaskFilters';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
+import Footer from './components/Footer';
 import TaskStats from './components/TaskStats';
+import TaskDetail from './components/TaskDetail';
 import {
   createTask,
   deleteTask,
   getTasks,
-  getTasksByStatus,
   login,
   register,
-  searchTasks,
-  updateTask
+  updateTask,
 } from './services/api';
+import './styles.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -30,31 +33,26 @@ function App() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [selectedTask, setSelectedTask] = useState(null);
 
-  // Filtros y paginación
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
-  // fetchTasks con useCallback para evitar recreación en cada render
   const fetchTasks = useCallback(async (authToken = token) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError('');
       const tasksData = await getTasks(authToken);
       setTasks(tasksData);
     } catch (error) {
-      setError('Error al cargar las tareas: ' + error.message);
+      toast.error('Error al cargar las tareas: ' + error.message);
     } finally {
       setLoading(false);
     }
-  }, [token]); // Dependencia: token
+  }, [token]);
 
-  // Cargar token y usuario desde localStorage al iniciar la app
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -66,7 +64,6 @@ function App() {
     }
   }, [fetchTasks]);
 
-  // Aplicar filtros cuando cambien tareas o filtros
   const applyFilters = useCallback(() => {
     let filtered = tasks;
 
@@ -82,7 +79,6 @@ function App() {
     }
 
     setFilteredTasks(filtered);
-
     const newTotalPages = Math.ceil(filtered.length / itemsPerPage);
     setTotalPages(newTotalPages);
     if (currentPage > newTotalPages && newTotalPages > 0) {
@@ -99,36 +95,14 @@ function App() {
     return filteredTasks.slice(startIndex, startIndex + itemsPerPage);
   };
 
-  // Manejo de búsqueda
-  const handleSearch = async (term) => {
+  const handleSearch = (term) => {
     setSearchTerm(term);
-    if (term) {
-      try {
-        setLoading(true);
-        const results = await searchTasks(term, token);
-        setFilteredTasks(results);
-      } catch (error) {
-        setError('Error en la búsqueda: ' + error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
+    setCurrentPage(1);
   };
 
-  // Manejo de filtros por estado
-  const handleStatusFilter = async (status) => {
+  const handleStatusFilter = (status) => {
     setStatusFilter(status);
-    if (status !== 'all') {
-      try {
-        setLoading(true);
-        const filtered = await getTasksByStatus(status, token);
-        setFilteredTasks(filtered);
-      } catch (error) {
-        setError('Error al filtrar tareas: ' + error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
+    setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
@@ -139,59 +113,64 @@ function App() {
   };
 
   const handleCreateTask = async (taskData) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError('');
       await createTask(taskData, token);
       setShowForm(false);
-      setSuccess('Tarea creada exitosamente');
-      setTimeout(() => setSuccess(''), 3000);
       await fetchTasks();
+      toast.success("Tarea creada exitosamente");
     } catch (error) {
-      setError('Error al crear la tarea: ' + error.message);
+      toast.error('Error al crear la tarea: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateTask = async (id, taskData) => {
+  const handleUpdateTask = async (taskData) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError('');
-      await updateTask(id, taskData, token);
+      await updateTask(editingTask.id, taskData, token);
       setEditingTask(null);
-      setSuccess('Tarea actualizada exitosamente');
-      setTimeout(() => setSuccess(''), 3000);
       await fetchTasks();
+      toast.success("Tarea actualizada exitosamente");
     } catch (error) {
-      setError('Error al actualizar la tarea: ' + error.message);
+      toast.error('Error al actualizar la tarea: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteTask = async (id) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
-      try {
-        setLoading(true);
-        setError('');
-        await deleteTask(id, token);
-        setSuccess('Tarea eliminada exitosamente');
-        setTimeout(() => setSuccess(''), 3000);
+    setLoading(true);
+    try {
+      await deleteTask(id, token);
+      await fetchTasks();
+      toast.success("Tarea eliminada exitosamente");
+    } catch (error) {
+      toast.error('Hubo un problema al eliminar la tarea.');
+      console.error('Error al eliminar la tarea:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleUpdateStatus = async (taskId, newStatus) => {
+    setLoading(true);
+    try {
+        await updateTask(taskId, { status: newStatus }, token);
         await fetchTasks();
-      } catch (error) {
-        setError('Error al eliminar la tarea: ' + error.message);
-      } finally {
+        toast.success("¡Estado de la tarea actualizado!");
+    } catch (error) {
+        toast.error("Error al actualizar el estado de la tarea.");
+        console.error('Error al actualizar el estado:', error);
+    } finally {
         setLoading(false);
-      }
     }
   };
 
-  // Registro - FUNCIÓN
   const handleRegister = async (userData) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError('');
       const result = await register(userData);
       setToken(result.token);
       localStorage.setItem('token', result.token);
@@ -199,31 +178,29 @@ function App() {
       localStorage.setItem('user', JSON.stringify(result.user));
       setIsAuthenticated(true);
       setShowRegister(false);
-      setSuccess('Usuario registrado exitosamente');
-      setTimeout(() => setSuccess(''), 3000);
-      return result; // Devolver resultado para manejo en Register
+      toast.success('Usuario registrado exitosamente');
+      return result;
     } catch (error) {
-      // Lanzar el error para que Register lo capture
+      toast.error('Error de registro: ' + error.message);
       throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  // Login - FUNCIÓN
   const handleLogin = async (credentials) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError('');
       const data = await login(credentials);
       setToken(data.token);
       localStorage.setItem('token', data.token);
       setUser(data.user);
       localStorage.setItem('user', JSON.stringify(data.user));
       setIsAuthenticated(true);
-      return data; // Devolver datos para manejo en Login
+      toast.success('Inicio de sesión exitoso');
+      return data;
     } catch (error) {
-      // Lanzar el error para que Login lo capture
+      toast.error('Error de inicio de sesión: ' + error.message);
       throw error;
     } finally {
       setLoading(false);
@@ -242,27 +219,28 @@ function App() {
     setStatusFilter('all');
   };
 
-  // Mostrar login o registro si no hay usuario autenticado
+  // Función para ver los detalles de una tarea
+  const handleViewTaskDetails = (task) => {
+    setSelectedTask(task);
+  };
+
+  // Función para volver a la lista
+  const handleBackToList = () => {
+    setSelectedTask(null);
+  };
+
   if (!isAuthenticated) {
     return showRegister ? (
       <Register 
         onRegister={handleRegister}
-        onSwitchToLogin={() => {
-          setShowRegister(false);
-          setError(''); // Limpiar errores al cambiar entre formularios
-        }}
+        onSwitchToLogin={() => setShowRegister(false)}
         loading={loading}
-        error={error}
       />
     ) : (
       <Login 
         onLogin={handleLogin}
-        onSwitchToRegister={() => {
-          setShowRegister(true);
-          setError(''); // Limpiar errores al cambiar entre formularios
-        }}
+        onSwitchToRegister={() => setShowRegister(true)}
         loading={loading}
-        error={error}
       />
     );
   }
@@ -289,90 +267,97 @@ function App() {
       </Navbar>
 
       <Container>
-        {error && (
-          <Alert variant="danger" dismissible onClose={() => setError('')}>
-            {error}
-          </Alert>
-        )}
-        {success && (
-          <Alert variant="success" dismissible onClose={() => setSuccess('')}>
-            {success}
-          </Alert>
-        )}
+        {selectedTask ? (
+          <TaskDetail
+            task={selectedTask}
+            onBack={handleBackToList}
+            onEdit={(task) => {
+              setEditingTask(task);
+              handleBackToList();
+            }}
+          />
+        ) : (
+          <>
+            <TaskStats tasks={tasks} />
+            <TaskFilters
+              searchTerm={searchTerm}
+              onSearchChange={handleSearch}
+              statusFilter={statusFilter}
+              onStatusFilterChange={handleStatusFilter}
+              onResetFilters={handleResetFilters}
+              onRefresh={() => fetchTasks()}
+            />
 
-        <TaskStats tasks={tasks} />
-        <TaskFilters
-          searchTerm={searchTerm}
-          onSearchChange={handleSearch}
-          statusFilter={statusFilter}
-          onStatusFilterChange={handleStatusFilter}
-          onResetFilters={handleResetFilters}
-          onRefresh={() => fetchTasks()}
-        />
+            <Row className="mb-4">
+              <Col>
+                <Button
+                  onClick={() => setShowForm(true)}
+                  disabled={loading}
+                  className="me-2"
+                >
+                  ➕ Crear Nueva Tarea
+                </Button>
+                {loading && (
+                  <span className="text-muted">
+                    <small>Cargando...</small>
+                  </span>
+                )}
+              </Col>
+            </Row>
 
-        <Row className="mb-4">
-          <Col>
-            <Button 
-              onClick={() => setShowForm(true)} 
-              disabled={loading}
-              className="me-2"
-            >
-              ➕ Crear Nueva Tarea
-            </Button>
-            {loading && (
-              <span className="text-muted">
-                <small>Cargando...</small>
-              </span>
+            {showForm && (
+              <TaskForm
+                onSubmit={handleCreateTask}
+                onCancel={() => setShowForm(false)}
+                loading={loading}
+              />
             )}
-          </Col>
-        </Row>
 
-        {showForm && (
-          <TaskForm
-            onSubmit={handleCreateTask}
-            onCancel={() => setShowForm(false)}
-            loading={loading}
-          />
-        )}
+            {editingTask && (
+              <TaskForm
+                task={editingTask}
+                onSubmit={handleUpdateTask}
+                onCancel={() => setEditingTask(null)}
+                loading={loading}
+              />
+            )}
 
-        {editingTask && (
-          <TaskForm
-            task={editingTask}
-            onSubmit={(data) => handleUpdateTask(editingTask.id, data)}
-            onCancel={() => setEditingTask(null)}
-            loading={loading}
-          />
-        )}
+            <TaskList
+              tasks={getCurrentPageTasks()}
+              onEdit={setEditingTask}
+              onDelete={handleDeleteTask}
+              onUpdateStatus={handleUpdateStatus}
+              onViewDetails={handleViewTaskDetails}
+              loading={loading}
+            />
 
-        <TaskList
-          tasks={getCurrentPageTasks()}
-          onEdit={setEditingTask}
-          onDelete={handleDeleteTask}
-          loading={loading}
-        />
+            {filteredTasks.length > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                itemsPerPage={itemsPerPage}
+                onItemsPerPageChange={setItemsPerPage}
+              />
+            )}
 
-        {filteredTasks.length > 0 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            itemsPerPage={itemsPerPage}
-            onItemsPerPageChange={setItemsPerPage}
-          />
-        )}
-
-        {!loading && filteredTasks.length === 0 && (
-          <div className="text-center py-5">
-            <h5>📝 No hay tareas para mostrar</h5>
-            <p className="text-muted">
-              {searchTerm || statusFilter !== 'all'
-                ? 'Intenta ajustar tus filtros de búsqueda'
-                : 'Crea tu primera tarea usando el botón de arriba'
-              }
-            </p>
-          </div>
+            {!loading && filteredTasks.length === 0 && (
+              <div className="text-center py-5">
+                <h5>📝 No hay tareas para mostrar</h5>
+                <p className="text-muted">
+                  {searchTerm || statusFilter !== 'all'
+                    ? 'Intenta ajustar tus filtros de búsqueda'
+                    : 'Crea tu primera tarea usando el botón de arriba'
+                  }
+                </p>
+              </div>
+            )}
+          </>
         )}
       </Container>
+      
+      <ToastContainer position="bottom-right" theme="colored" />
+      <Footer />
     </div>
   );
 }

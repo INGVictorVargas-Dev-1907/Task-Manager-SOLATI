@@ -8,7 +8,7 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
         password: '',
         confirmPassword: ''
     });
-    const [error, setError] = useState('');
+    const [localError, setLocalError] = useState('');
     const [loading, setLoading] = useState(false);
     const [notification, setNotification] = useState({ show: false, message: '', variant: 'danger' });
 
@@ -18,92 +18,73 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
             [e.target.name]: e.target.value
         });
         
-        // Limpiar notificaciones al empezar a escribir
+        // Limpiar errores locales y notificaciones al empezar a escribir
+        if (localError) {
+            setLocalError('');
+        }
         if (notification.show) {
             setNotification({ show: false, message: '', variant: 'danger' });
-        }
-        if (error) {
-            setError('');
         }
     };
 
     const showNotification = (message, variant = 'danger') => {
         setNotification({ show: true, message, variant });
-        // Ocultar automáticamente después de 5 segundos
         setTimeout(() => setNotification({ show: false, message: '', variant: 'danger' }), 5000);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
+        setLocalError('');
         setNotification({ show: false, message: '', variant: 'danger' });
 
-        // Validaciones básicas
+        // Validaciones del lado del cliente
         if (!userData.name.trim()) {
-            setError('El nombre es requerido');
+            setLocalError('El nombre es requerido');
             setLoading(false);
             return;
         }
 
         if (!userData.email.trim()) {
-            setError('El email es requerido');
+            setLocalError('El email es requerido');
+            setLoading(false);
+            return;
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userData.email)) {
+            setLocalError('Por favor ingresa un email válido');
             setLoading(false);
             return;
         }
 
         if (userData.password !== userData.confirmPassword) {
-            setError('Las contraseñas no coinciden');
+            setLocalError('Las contraseñas no coinciden');
             setLoading(false);
             return;
         }
 
         if (userData.password.length < 6) {
-            setError('La contraseña debe tener al menos 6 caracteres');
-            setLoading(false);
-            return;
-        }
-
-        // Validación de formato de email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(userData.email)) {
-            setError('Por favor ingresa un email válido');
+            setLocalError('La contraseña debe tener al menos 6 caracteres');
             setLoading(false);
             return;
         }
 
         try {
-            // Asegurarnos de que onRegister devuelva una promesa y lance errores
             const result = await onRegister({
                 name: userData.name.trim(),
                 email: userData.email.toLowerCase().trim(),
                 password: userData.password
             });
             
-            // Si el registro fue exitoso pero hay un mensaje del backend
+            // Si el registro es exitoso, muestra el mensaje y redirige al login
             if (result && result.message) {
                 showNotification(result.message, 'success');
+                setTimeout(() => onSwitchToLogin(), 2000); 
             }
-            
         } catch (error) {
-            console.log('Error completo:', error);
-            
-            // Manejar diferentes tipos de errores
-            if (error?.response?.status === 409) {
-                showNotification('⚠️ Este email ya está registrado. ¿Olvidaste tu contraseña?', 'warning');
-            } 
-            else if (error?.response?.data?.message) {
-                showNotification(`❌ ${error.response.data.message}`, 'danger');
-            } 
-            else if (error?.message?.includes('Network Error')) {
-                showNotification('🌐 Error de conexión. Verifica tu internet e intenta nuevamente.', 'info');
-            } 
-            else if (error?.message) {
-                showNotification(`❌ ${error.message}`, 'danger');
-            }
-            else {
-                showNotification('❌ Error al registrar usuario. Intenta nuevamente.', 'danger');
-            }
+            // El servicio ya se encarga de dar un mensaje de error claro
+            showNotification(error.message, 'danger');
         } finally {
             setLoading(false);
         }
@@ -113,7 +94,7 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
         <Container className="d-flex justify-content-center align-items-center min-vh-100">
             <Row className="w-100">
                 <Col md={6} lg={4} className="mx-auto">
-                    {/* Notificación de alerta - POSICIÓN FIJA para mejor visibilidad */}
+                    {/* Notificación de alerta */}
                     {notification.show && (
                         <div style={{
                             position: 'fixed',
@@ -139,9 +120,9 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
                         <Card.Body>
                             <Card.Title className="text-center mb-4">Crear Cuenta</Card.Title>
                             
-                            {error && (
+                            {localError && (
                                 <Alert variant="danger" className="mb-3">
-                                    <strong>{error}</strong>
+                                    <strong>{localError}</strong>
                                 </Alert>
                             )}
                             
@@ -214,27 +195,12 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
                                     onClick={onSwitchToLogin}
                                     disabled={loading}
                                     className="rounded-pill px-4 py-2 d-flex align-items-center justify-content-center mx-auto"
-                                    style={{
-                                        border: '2px solid',
-                                        background: 'transparent',
-                                        transition: 'all 0.3s ease',
-                                        width: 'fit-content'
-                                    }}
-                                    onMouseOver={(e) => {
-                                        e.target.style.background = '#0d6efd';
-                                        e.target.style.color = 'white';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.target.style.background = 'transparent';
-                                        e.target.style.color = '#0d6efd';
-                                    }}
                                 >
                                     <span className="me-2">→</span>
                                     ¿Ya tienes cuenta? Inicia sesión
                                 </Button>
                             </div>
 
-                            {/* Información adicional */}
                             <div className="mt-3">
                                 <small className="text-muted">
                                     🔒 Tu información está protegida. Al registrarte aceptas nuestros términos y condiciones.
