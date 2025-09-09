@@ -299,7 +299,7 @@ CREATE TABLE tasks (
 |----------|---------------|-----------------------------|
 | 🟡 POST  | /api/register | Registrar un nuevo usuario. |
 | 🟡 POST  | /api/login    | Iniciar sesión de usuario.  |
-| POST    | /api/logout   | Cerrrar sesión        |
+| 🟡 POST    | /api/logout   | Cerrrar sesión        |
 
 
 ---
