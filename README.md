@@ -1,29 +1,79 @@
 # 📋 Sistema de Gestión de Tareas
 
-Sistema completo de gestión de tareas con API RESTful contenerizada en PHP y frontend en React.
+¡Bienvenido al Gestor de Tareas Avanzado! Este es un sistema completo de gestión de tareas con una API RESTful desarrollada en PHP y un frontend dinámico creado con React. Todo el entorno está contenerizado con Docker para un despliegue rápido y consistente.
 
 ---
 
-## 🚀 Características
+## 🚀 Características  Principales
+El proyecto está diseñado con las mejores prácticas en mente, ofreciendo:
 
-- ✅ API RESTful contenerizada con PHP Slim Framework  
-- ✅ Frontend React con Bootstrap responsive  
-- ✅ Autenticación JWT segura  
-- ✅ Base de datos PostgreSQL contenerizada  
-- ✅ CRUD completo de tareas  
-- ✅ Validación de datos en frontend y backend  
-- ✅ Documentación Swagger integrada  
-- ✅ Patrón MVC y Repository  
-- ✅ Diseño responsive para móviles y desktop  
+- Arquitectura Modular: Backend con PHP (Slim Framework) y un frontend en React.
+- Autenticación Segura: Implementación de tokens JWT para proteger las rutas de la API.
+-  Persistencia de Datos: Una base de datos PostgreSQL contenerizada para el almacenamiento de tareas.
+- Experiencia de Usuario: Interfaz de usuario intuitiva y responsive gracias a React y Bootstrap.
+- Código Sólido: Adopta patrones de diseño como MVC y Repository para una lógica clara y fácil de mantener.
+- CRUD completo de tareas
+- Validación de datos en frontend y backend
+-  Documentación Completa: Documentación interactiva de la API con apidoc, directamente desde los comentarios del código.
+-  Validación Doble: Validación de datos tanto en el frontend como en el backend para una mayor seguridad.
+- ✅ Diseño responsive para móviles y desktop
+
+---
+
+## 📋 Requisitos Previos
+Asegúrate de tener instalado y configurado lo siguiente en tu sistema:
+
+- Docker y Docker Compose
+- Node.js 16+ y npm
+- Git (opcional)
+
+---
+
+## ⚙️ Tecnologías Utilizadas
+Este proyecto se construye sobre una sólida pila de tecnologías modernas para un desarrollo eficiente y escalable.
+
+### Backend
+| Tecnología | Descripción |
+|------------|-------------|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-plain.svg" width="30" height="30" alt="PHP"/> **PHP 8.2** | El lenguaje de programación principal del lado del servidor. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/slim/slim-plain.svg" width="30" height="30" alt="Slim"/> **Slim Framework 4** | Un micro-framework de PHP para construir la API RESTful. |
+| 🔑 **Firebase JWT** | Biblioteca para manejar la autenticación con JSON Web Tokens. |
+| ⚙️ **phpdotenv** | Para manejar las variables de entorno de la aplicación. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg" width="30" height="30" alt="Nginx"/> **Nginx** | Servidor web ligero y de alto rendimiento que sirve la API. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-plain.svg" width="30" height="30" alt="Docker"/> **Docker & Docker Compose** | Para la contenerización y orquestación de la API y la base de datos. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-plain.svg" width="30" height="30" alt="PostgreSQL"/> **PostgreSQL (ext-pgsql)** | Un sistema de gestión de bases de datos relacional robusto. |
+
+---
+
+### Frontend
+| Tecnología | Descripción |
+|------------|-------------|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="30" height="30" alt="React"/> **React** | La biblioteca de JavaScript para construir la interfaz de usuario. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-plain.svg" width="30" height="30" alt="Bootstrap"/> **React Bootstrap & Bootstrap 5.3.8** | Frameworks CSS para un diseño responsive y atractivo. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/reactrouter/reactrouter-plain.svg" width="30" height="30" alt="React Router"/> **React Router DOM 7.8.2** | Para manejar la navegación en la aplicación. |
+| 📡 **Axios 1.11.0** | Cliente HTTP para realizar peticiones a la API desde el frontend. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-plain.svg" width="30" height="30" alt="React Icons"/> **React Icons 5.5.0** | Biblioteca de iconos para la interfaz de usuario. |
+**React Toastify** | Biblioteca de alertas de notificaciónes. |
+
+---
+
+### Herramientas de Desarrollo
+| Herramienta | Descripción |
+|-------------|-------------|
+| 📄 **apidoc** | Generador de documentación de API a partir de comentarios en el código. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg" width="30" height="30" alt="npm"/> **npm** | Gestor de paquetes de Node.js. |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/composer/composer-original.svg" width="30" height="30" alt="Composer"/> **Composer** | Gestor de dependencias de PHP. |
+| 🧪 **PHPUnit** | Un framework de pruebas unitarias para PHP. |
 
 ---
 
 ## 🏗️ Arquitectura
 ```bash
 task-manager/
-├── 📁 backend/ # API PHP (Contenerizada)
-│ ├── 📁 app/ # Lógica de la aplicación
-│ ├── 📁 public/ # Punto de entrada
+├── 📁 backend/  # API RESTful en PHP (Contenedor Docker)
+│ ├── 📁 apidoc-nginx/ # documentacion API y servidor web
+│ ├── 📁 app/ # Lógica del API, controladores, modelos, repositorios etc.
+│ ├── 📁 public/ # Punto de entrada de la aplicación
 │ ├── 📁 database/ # Esquemas de BD
 │ ├── 🐳 Dockerfile # Definición del contenedor
 │ ├── 🐳 docker-compose.yml # Orquestación
@@ -39,14 +89,6 @@ task-manager/
 
 ---
 
-## 📋 Requisitos Previos
-
-- Docker y Docker Compose
-- Node.js 16+ y npm
-- Git (opcional)
-
----
-
 ## 🛠️ Instalación y Configuración
 
 ### 1. Clonar o Descargar el Proyecto
@@ -55,11 +97,14 @@ git clone <url-del-repositorio>
 cd task-manager
 ```
 
-### 2. Configurar el Backend (API)
+### 2. Configuración de Variables de Entorno
+Backend (API):
+Navega al directorio backend/ y crea el archivo .env a partir del ejemplo.
 ```bash
 cd backend
 cp .env.example .env
 ```
+Edita el archivo .env con tus credenciales y configuraciones. Es crucial que definas DB_PASS y JWT_SECRET con valores seguros y únicos.
 
 #### variabes de entorno
 ```env
@@ -83,7 +128,8 @@ APP_URL=http://localhost:8080
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
-### 3. Configurar el Frontend
+### 3. Frontend (React):
+Vuelve al directorio principal, navega a frontend/ y crea el archivo .env.
 ```bash
 cd ../frontend
 cp .env.example .env
@@ -96,32 +142,65 @@ REACT_APP_VERSION=1.0.0
 
 
 ### 4. Instalar Dependencias del Frontend
+Permanece en el directorio frontend/ e instala las dependencias de Node.js:
 ```bash
 npm install
 ```
 
+---
+
 ### 🚀 Ejecución del Sistema
-Opción A: Ejecución Completa (Recomendada)
-Terminal 1 - API y Base de Datos:
+El sistema se ejecuta en dos partes. Necesitarás dos terminales.
+
+#### Terminal 1 (Backend y Base de Datos):
+Desde el directorio backend/, inicia los contenedores de Docker.
 ```bash
 cd backend
 docker-compose up --build
 ```
+Este comando construirá las imágenes, creará los contenedores de PHP y PostgreSQL, y los ejecutará en segundo plano.
 
-Terminal 2 - Frontend:
+#### Terminal 2 (Frontend):
+Desde el directorio frontend/, inicia la aplicación React.
 ```bash
 cd frontend
 npm start
 ```
 
-## 🌐 URLs de Acceso
+---
+
+## 🌐 URLs de nuesto Backend - contenerizado en Docker
 
 | Servicio        | URL                          | Descripción       |
 |-----------------|-----------------------------|-----------------|
-| Frontend        | http://localhost:3000       | Aplicación React |
-| API Backend     | http://localhost:8080       | API RESTful      |
-| Documentación   | http://localhost:8080/api/docs | Swagger UI    |
-| Base de Datos   | localhost:5432              | PostgreSQL       |
+| Aplicación React       | http://localhost:3000       | Aplicación React |
+| API RESTful Backend     | http://localhost:8080       | API RESTful      |
+| Documentación de la API (apidoc)  |(Acceso) http://localhost:8081/ | APIDOC(apiDoc )    |
+
+---
+
+## Comandos Útiles
+
+### Docker (backend/)
+
+| Comando                         | Descripción                                                                 |
+|---------------------------------|-----------------------------------------------------------------------------|
+| `docker-compose up --build`     | Inicia y construye las imágenes antes de levantar los contenedores. (Backend, DB - **primer plano**) |
+| `docker-compose down`           | Detiene y elimina todos los contenedores.                                   |
+| `docker-compose logs`           | Muestra los logs de un servicio específico (ej: `api`, `db`).               |
+| `docker ps`                     | Lista los contenedores en ejecución.                                        |
+| `docker-compose up --build -d`  | Reconstruye y levanta los contenedores en **segundo plano** (el terminal queda libre). |
+
+
+### Node.js (en frontend/)
+### NPM
+
+| Comando        | Descripción                                   |
+|----------------|-----------------------------------------------|
+| `npm install`  | Instala todas las dependencias del proyecto.  |
+| `npm start`    | Inicia la aplicación en modo desarrollo.      |
+
+---
 
 ### 📊 Estructura de la Base de Datos
 ```sql
@@ -144,48 +223,71 @@ CREATE TABLE tasks (
 );
 ```
 
-#### 🔐 Autenticación API
-Registro de Usuario
-```http
-POST /api/register
-Content-Type: application/json
-
-{
-  "name": "Juan Pérez",
-  "email": "juan@example.com",
-  "password": "password123"
-}
-```
-
-Login de Usuario
-```http
-POST /api/login
-Content-Type: application/json
-
-{
-  "email": "juan@example.com",
-  "password": "password123"
-}
-```
-
-Uso de Token JWT
-```http
-GET /api/tasks
-Authorization: Bearer <jwt_token>
-```
+---
 
 ## 📋 Endpoints de la API
 
-**Tareas (Requieren autenticación)**
+#### 🔐 Rutas de Autenticación
 
-| Método | Endpoint           | Descripción               |
-|--------|------------------|--------------------------|
-| GET    | /api/tasks        | Obtener todas las tareas |
-| POST   | /api/tasks        | Crear nueva tarea        |
-| PUT    | /api/tasks/{id}   | Actualizar tarea         |
-| DELETE | /api/tasks/{id}   | Eliminar tarea           |
+| Método   | Endpoint      | Descripción                 |
+|----------|---------------|-----------------------------|
+| 🟡 POST  | /api/register | Registrar un nuevo usuario. |
+| 🟡 POST  | /api/login    | Iniciar sesión de usuario.  |
 
-Ejemplo de Tarea:
+#### 🔒 Rutas Protegidas (requieren autenticación con JWT)
+| Método   | Endpoint                  | Descripción                                  |
+|----------|---------------------------|----------------------------------------------|
+| 🟢 GET   | /api/tasks/search         | Buscar tareas por filtros.                   |
+| 🟢 GET   | /api/tasks/status/{status}| Obtener tareas filtradas por estado.         |
+| 🟢 GET   | /api/tasks                | Obtener todas las tareas - paginadas.                    |
+| 🟢 GET   | /api/tasks/{id}           | Obtener una tarea específica por ID.         |
+| 🟡 POST  | /api/tasks                | Crear una nueva tarea.                       |
+| 🔵 PUT   | /api/tasks/{id}           | Actualizar una tarea existente.              |
+| 🔴 DELETE| /api/tasks/{id}           | Eliminar una tarea existente.                |
+
+### 🔐 Autenticación API
+Para interactuar con los endpoints de tareas, primero necesitas autenticarte.
+
+Content-Type: application/json
+
+1. Registro de Usuario
+Endpoint:
+```http
+POST http://localhost:8080/api/register
+```
+
+```json
+{
+  "name": "Juan Pérez",
+  "email": "juan@ejemplo.com",
+  "password": "una_contraseña_segura"
+}
+```
+
+2. Login de Usuario
+Endpoint:
+```http
+POST http://localhost:8080/api/login
+```
+
+```json
+{
+  "email": "juan@ejemplo.com",
+  "password": "una_contraseña_segura"
+}
+```
+La respuesta te dará un token JWT que debes usar para las siguientes peticiones.
+
+3. Usar el Token
+Incluye el token JWT en el encabezado Authorization de tus peticiones, con el prefijo Bearer.
+
+##### Ejemplo de petición
+```http
+GET http://localhost:8080/api/tasks
+Authorization: Bearer <tu_token_jwt_aqui>
+```
+
+##### Ejemplo de Tarea:
 ```json
 {
   "id": 1,
@@ -197,6 +299,8 @@ Ejemplo de Tarea:
   "updated_at": "2023-12-01T10:00:00Z"
 }
 ```
+
+---
 
 ### Solución de Problemas
 
@@ -217,48 +321,15 @@ Puerto ya en Uso
 ports:
   - "8081:80"  # Cambiar puerto externo
 ```
+`
 
-## Comandos Útiles
-Docker
-```bash
-docker ps                 # Ver contenedores en ejecución
-docker-compose logs api    # Ver logs de la API
-docker-compose down        # Detener todos los contenedores
-docker-compose up --build  # Reconstruir contenedores
-```
-
-### 📝 Estructura de Archivos del Backend
-```bash
-backend/
-├── app/
-│   ├── config/          # Configuración de base de datos
-│   ├── controllers/     # Controladores (Auth, Task)
-│   ├── middlewares/     # Middleware de autenticación
-│   ├── models/          # Modelos (User, Task)
-│   └── repositories/    # Patrón Repository
-├── database/
-│   └── schema.sql       # Esquema de base de datos
-├── public/
-│   └── index.php        # Punto de entrada
-└── vendor/              # Dependencias Composer
-```
-
-### Frontend Componentes
-```bash
-frontend/src/
-├── components/
-│   ├── Login.js         # Componente de login
-│   ├── Register.js      # Componente de registro
-│   ├── TaskForm.js      # Formulario de tareas
-│   └── TaskList.js      # Lista de tareas
-├── services/
-│   └── api.js           # Servicios de API
-└── App.js               # Componente principal
-```
+---
 
 ### 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT.
+
+---
 
 ### Autor
 Victor Vargas Diaz
