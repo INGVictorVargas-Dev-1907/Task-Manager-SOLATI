@@ -14,7 +14,7 @@ class AuthMiddleware {
 
         if (empty($token)) {
             $response = new \Slim\Psr7\Response();
-            $response->getBody()->write(json_encode(["message" => "Token de acceso requerido"]));
+            $response->getBody()->write(json_encode(["message" => "El Token de acceso requerido"]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
         

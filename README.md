@@ -1,4 +1,4 @@
-# 📋 Sistema de Gestión de Tareas
+# 🚀 Task Manager - SOLATI
 
 ¡Bienvenido al Gestor de Tareas Avanzado! Este es un sistema completo de gestión de tareas con una API RESTful desarrollada en PHP y un frontend dinámico creado con React. Todo el entorno está contenerizado con Docker para un despliegue rápido y consistente.
 
@@ -64,6 +64,63 @@ Este proyecto se construye sobre una sólida pila de tecnologías modernas para 
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg" width="30" height="30" alt="npm"/> **npm** | Gestor de paquetes de Node.js. |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/composer/composer-original.svg" width="30" height="30" alt="Composer"/> **Composer** | Gestor de dependencias de PHP. |
 | 🧪 **PHPUnit** | Un framework de pruebas unitarias para PHP. |
+=======
+Sistema completo de gestión de tareas con autenticación de usuarios, desarrollado para SOLATI S.A.S.
+
+---
+
+## 🚀 Características
+### Backend (PHP)
+- **API RESTful** completa con endpoints para gestión de tareas 
+- **Autenticación JWT** segura  
+- **Base de datos PostgreSQL** contenerizada  
+- **CRUD** completo de tareas  
+- **Validación de datos** en frontend y backend  
+- **Patrón MVC y Repository** para separación de responsabilidades 
+
+### Frontend (React.js)
+- **Interfaz moderna** con React Bootstrap
+- **Gestión de estado** con React Hooks
+- **Formularios interactivos** con validación en tiempo real
+- **Filtros y búsqueda** de tareas
+- **Paginación** eficiente
+- **Notificaciones** toast y alertas contextuales
+- **Diseño responsive** y profesional
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+### Backend
+- PHP 7.4+
+- JWT Authentication
+- MySQL Database
+- Swagger-PHP para documentación
+- Composer para gestión de dependencias
+
+### Frontend
+- React.js 18+
+- React Bootstrap
+- React Icons
+- Axios para peticiones HTTP
+- CSS3 con diseño moderno
+
+---
+
+## 📦 Instalación y Configuración
+
+### Prerrequisitos
+- PHP 7.4 o superior
+- Composer
+- Node.js 16+
+- MySQL 5.7+
+- Servidor web (Apache/Nginx)
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/INGVictorVargas-Dev-1907/Task_Manager-SOLATI.git
+cd task-manager
+```
 
 ---
 
@@ -128,8 +185,13 @@ APP_URL=http://localhost:8080
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
+
 ### 3. Frontend (React):
 Vuelve al directorio principal, navega a frontend/ y crea el archivo .env.
+
+---
+
+### 3. Configurar el Frontend
 ```bash
 cd ../frontend
 cp .env.example .env
@@ -169,6 +231,7 @@ npm start
 
 ---
 
+
 ## 🌐 URLs de nuesto Backend - contenerizado en Docker
 
 | Servicio        | URL                          | Descripción       |
@@ -202,6 +265,17 @@ npm start
 
 ---
 
+## 🌐 URLs de Acceso
+
+| Servicio        | URL                          | Descripción       |
+|-----------------|-----------------------------|-----------------|
+| Frontend        | http://localhost:3000       | Aplicación React |
+| API Backend     | http://localhost:8080       | API RESTful      |
+| Base de Datos   | localhost:5432              | PostgreSQL       |
+
+
+---
+
 ### 📊 Estructura de la Base de Datos
 ```sql
 CREATE TABLE users (
@@ -225,6 +299,7 @@ CREATE TABLE tasks (
 
 ---
 
+
 ## 📋 Endpoints de la API
 
 #### 🔐 Rutas de Autenticación
@@ -233,6 +308,11 @@ CREATE TABLE tasks (
 |----------|---------------|-----------------------------|
 | 🟡 POST  | /api/register | Registrar un nuevo usuario. |
 | 🟡 POST  | /api/login    | Iniciar sesión de usuario.  |
+| POST    | /api/logout   | Cerrrar sesión        |
+
+
+---
+
 
 #### 🔒 Rutas Protegidas (requieren autenticación con JWT)
 | Método   | Endpoint                  | Descripción                                  |
@@ -302,6 +382,9 @@ Authorization: Bearer <tu_token_jwt_aqui>
 
 ---
 
+
+### 🔄 Estados de carga y manejo de errores
+
 ### Solución de Problemas
 
 Error de Conexión a la Base de Datos
@@ -325,11 +408,21 @@ ports:
 
 ---
 
-### 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT.
+### 🤝 Contribución
+1. Fork el proyecto
+2. Crea una rama para tu feature (git checkout -b feature/AmazingFeature)
+3. Commit tus cambios (git commit -m 'Add some AmazingFeature')
+4. Push a la rama (git push origin feature/AmazingFeature)
+5. Abre un Pull Request
 
 ---
 
-### Autor
-Victor Vargas Diaz
+### 📄 Licencia
+Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.
+
+---
+
+## 👨‍💻 Autor
+
+**Victor Vargas** - [![GitHub](https://img.shields.io/badge/GitHub-INGVictorVargas--Dev--1907-181717?style=flat&logo=github)](https://github.com/INGVictorVargas-Dev-1907)

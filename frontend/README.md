@@ -1,70 +1,264 @@
-# Getting Started with Create React App
+# 📋 Sistema de Gestión de Tareas
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Sistema completo de gestión de tareas con API RESTful contenerizada en PHP y frontend en React.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Características
 
-### `npm start`
+- ✅ API RESTful contenerizada con PHP Slim Framework  
+- ✅ Frontend React con Bootstrap responsive  
+- ✅ Autenticación JWT segura  
+- ✅ Base de datos PostgreSQL contenerizada  
+- ✅ CRUD completo de tareas  
+- ✅ Validación de datos en frontend y backend  
+- ✅ Documentación Swagger integrada  
+- ✅ Patrón MVC y Repository  
+- ✅ Diseño responsive para móviles y desktop  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🏗️ Arquitectura
+```bash
+task-manager/
+├── 📁 backend/ # API PHP (Contenerizada)
+│ ├── 📁 app/ # Lógica de la aplicación
+│ ├── 📁 public/ # Punto de entrada
+│ ├── 📁 database/ # Esquemas de BD
+│ ├── 🐳 Dockerfile # Definición del contenedor
+│ ├── 🐳 docker-compose.yml # Orquestación
+│ └── 📄 .env # Variables de entorno
+│
+├── 📁 frontend/ # React App (Tradicional)
+│ ├── 📁 src/ # Componentes React
+│ ├── 📁 public/ # Archivos públicos
+│ └── 📄 package.json # Dependencias
+│
+└── 📄 README.md # Documentación
+```
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📋 Requisitos Previos
 
-### `npm run build`
+- Docker y Docker Compose
+- Node.js 16+ y npm
+- Git (opcional)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛠️ Instalación y Configuración
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1. Clonar o Descargar el Proyecto
+```bash
+git clone <url-del-repositorio>
+cd task-manager
+```
 
-### `npm run eject`
+### 2. Configurar el Backend (API)
+```bash
+cd backend
+cp .env.example .env
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### variabes de entorno
+```env
+# CONFIGURACIÓN DE BASE DE DATOS POSTGRESQL
+DB_HOST=db
+DB_NAME=taskdb
+DB_USER=taskuser
+DB_PASS=tu_password_seguro_aqui
+DB_PORT=5432
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# CONFIGURACIÓN JWT (AUTENTICACIÓN)
+JWT_SECRET=tu_clave_super_secreta_jwt_muy_larga_y_compleja_aqui
+JWT_EXPIRE=3600
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# ENTORNO DE EJECUCIÓN
+APP_ENV=development
+APP_DEBUG=true
+APP_URL=http://localhost:8080
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# CONFIGURACIÓN CORS (FRONTEND)
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
 
-## Learn More
+### 3. Configurar el Frontend
+```bash
+cd ../frontend
+cp .env.example .env
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Archivo frontend/.env:
+REACT_APP_API_URL=http://localhost:8080
+REACT_APP_APP_NAME=nombre_de_la_app
+REACT_APP_VERSION=1.0.0
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+### 4. Instalar Dependencias del Frontend
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 🚀 Ejecución del Sistema
+Opción A: Ejecución Completa (Recomendada)
+Terminal 1 - API y Base de Datos:
+```bash
+cd backend
+docker-compose up --build
+```
 
-### Analyzing the Bundle Size
+Terminal 2 - Frontend:
+```bash
+cd frontend
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🌐 URLs de Acceso
 
-### Making a Progressive Web App
+| Servicio        | URL                          | Descripción       |
+|-----------------|-----------------------------|-----------------|
+| Frontend        | http://localhost:3000       | Aplicación React |
+| API Backend     | http://localhost:8080       | API RESTful      |
+| Documentación   | http://localhost:8080/api/docs | Swagger UI    |
+| Base de Datos   | localhost:5432              | PostgreSQL       |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 📊 Estructura de la Base de Datos
+```sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-### Advanced Configuration
+CREATE TABLE tasks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'completada')),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### 🔐 Autenticación API
+Registro de Usuario
+```http
+POST /api/register
+Content-Type: application/json
 
-### Deployment
+{
+  "name": "Juan Pérez",
+  "email": "juan@example.com",
+  "password": "password123"
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Login de Usuario
+```http
+POST /api/login
+Content-Type: application/json
 
-### `npm run build` fails to minify
+{
+  "email": "juan@example.com",
+  "password": "password123"
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Uso de Token JWT
+```http
+GET /api/tasks
+Authorization: Bearer <jwt_token>
+```
+
+## 📋 Endpoints de la API
+
+**Tareas (Requieren autenticación)**
+
+| Método | Endpoint           | Descripción               |
+|--------|------------------|--------------------------|
+| GET    | /api/tasks        | Obtener todas las tareas |
+| POST   | /api/tasks        | Crear nueva tarea        |
+| PUT    | /api/tasks/{id}   | Actualizar tarea         |
+| DELETE | /api/tasks/{id}   | Eliminar tarea           |
+
+Ejemplo de Tarea:
+```json
+{
+  "id": 1,
+  "title": "Reunión importante",
+  "description": "Preparar presentación para la reunión",
+  "status": "pendiente",
+  "user_id": 1,
+  "created_at": "2023-12-01T10:00:00Z",
+  "updated_at": "2023-12-01T10:00:00Z"
+}
+```
+
+### Solución de Problemas
+
+Error de Conexión a la Base de Datos
+```bash
+docker ps
+docker-compose logs db
+```
+
+Error de CORS
+```env
+REACT_APP_API_URL=http://localhost:8080
+```
+
+Puerto ya en Uso
+```yml
+# docker-compose.yml
+ports:
+  - "8081:80"  # Cambiar puerto externo
+```
+
+## Comandos Útiles
+Docker
+```bash
+docker ps                 # Ver contenedores en ejecución
+docker-compose logs api    # Ver logs de la API
+docker-compose down        # Detener todos los contenedores
+docker-compose up --build  # Reconstruir contenedores
+```
+
+### 📝 Estructura de Archivos del Backend
+```bash
+backend/
+├── app/
+│   ├── config/          # Configuración de base de datos
+│   ├── controllers/     # Controladores (Auth, Task)
+│   ├── middlewares/     # Middleware de autenticación
+│   ├── models/          # Modelos (User, Task)
+│   └── repositories/    # Patrón Repository
+├── database/
+│   └── schema.sql       # Esquema de base de datos
+├── public/
+│   └── index.php        # Punto de entrada
+└── vendor/              # Dependencias Composer
+```
+
+### Frontend Componentes
+```bash
+frontend/src/
+├── components/
+│   ├── Login.js         # Componente de login
+│   ├── Register.js      # Componente de registro
+│   ├── TaskForm.js      # Formulario de tareas
+│   └── TaskList.js      # Lista de tareas
+├── services/
+│   └── api.js           # Servicios de API
+└── App.js               # Componente principal
+```
+
+### 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
+### Autor
+Victor Vargas Diaz
